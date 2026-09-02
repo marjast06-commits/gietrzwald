@@ -345,7 +345,6 @@
             background: white;
         }
 
-        /* POPRAWKA: Umożliwienie rozciągania pól tekstowych (textarea) oraz poprawne zawijanie w nich tekstu */
         .form-group-styled textarea {
             resize: vertical;
             min-height: 80px;
@@ -448,7 +447,6 @@
             box-shadow: var(--card-shadow);
         }
 
-        /* BOX NA ORĘDZIA / WYDARZENIA HISTORYCZNE */
         .liturgy-event-highlight {
             background: #f8fafc;
             border-left: 4px solid var(--accent-gold);
@@ -604,12 +602,15 @@
             object-fit: cover;
         }
 
-        /* Poprawka formatowania tekstu opisu w kafelku duszpasterza, aby długie opisy ładnie się zawijały */
+        /* Poprawka formatowania tekstu opisu w kafelku duszpasterza z lewym wyrównaniem */
         .priest-desc {
             font-size: 0.9rem;
             color: var(--text-secondary);
             word-break: break-word;
             white-space: pre-line;
+            text-align: left;
+            width: 100%;
+            padding: 0 10px;
         }
 
         footer {
@@ -988,7 +989,6 @@
                 </div>
                 <div class="form-group-styled">
                     <label>Opis:</label>
-                    <!-- Zwiększona domyślna wysokość i włączona obsługa rozciągania -->
                     <textarea id="admin-priest-desc" rows="4" placeholder="Wprowadź pełny opis lub zakres obowiązków..."></textarea>
                 </div>
                 <div class="form-group-styled">
@@ -1334,24 +1334,40 @@
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) { finishSavingPriest(editId, name, role, desc, e.target.result); }
+                reader.onload = function(e) { 
+                    finishSavingPriest(editId, name, role, desc, e.target.result); 
+                };
+                reader.onerror = function() {
+                    alert("Wystąpił błąd podczas odczytu pliku zdjęcia.");
+                };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                let photo = priests.find(p => p.id == editId)?.photo || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300";
+                let photo = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300";
+                if(editId) {
+                    const existing = priests.find(p => p.id == editId);
+                    if(existing && existing.photo) {
+                        photo = existing.photo;
+                    }
+                }
                 finishSavingPriest(editId, name, role, desc, photo);
             }
         }
 
         function finishSavingPriest(editId, name, role, desc, photo) {
-            if(editId) {
-                const idx = priests.findIndex(p => p.id == editId);
-                if(idx !== -1) priests[idx] = { id: Number(editId), name, role, desc, photo };
-            } else {
-                priests.push({ id: Date.now(), name, role, desc, photo });
+            try {
+                if(editId) {
+                    const idx = priests.findIndex(p => p.id == editId);
+                    if(idx !== -1) priests[idx] = { id: Number(editId), name, role, desc, photo };
+                } else {
+                    priests.push({ id: Date.now(), name, role, desc, photo });
+                }
+                localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+                resetPriestForm();
+                renderPriests();
+                alert("Duszpasterz został pomyślnie zapisany!");
+            } catch (e) {
+                alert("Błąd zapisu: Prawdopodobnie wybrano zbyt duże zdjęcie, które przekracza limit pamięci przeglądarki (LocalStorage). Wybierz mniejszy plik graficzny.");
             }
-            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
-            resetPriestForm();
-            renderPriests();
         }
 
         function editPriest(id) {
