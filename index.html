@@ -602,7 +602,6 @@
             object-fit: cover;
         }
 
-        /* Poprawka formatowania tekstu opisu w kafelku duszpasterza z lewym wyrównaniem */
         .priest-desc {
             font-size: 0.9rem;
             color: var(--text-secondary);
@@ -777,11 +776,11 @@
                     <input type="text" id="admin-read-date" placeholder="np. Niedziela, 6 września 2026">
                 </div>
                 <div class="form-group-styled">
-                    <label>Nazwa dnia / Okres (np. Poniedziałek XXII Tygodnia Okresu Zwykłego / Wspomnienie / Uroczystość):</label>
+                    <label>Nazwa dnia / Okres:</label>
                     <input type="text" id="admin-read-cycle" placeholder="np. Poniedziałek XXII Tygodnia Okresu Zwykłego">
                 </div>
                 <div class="form-group-styled">
-                    <label>Ważne wydarzenie dnia / Orędzie / Uwaga historyczna (np. Pierwszy czwartek miesiąca / Rocznica objawień):</label>
+                    <label>Ważne wydarzenie dnia / Orędzie / Uwaga historyczna:</label>
                     <input type="text" id="admin-read-event" placeholder="np. Pierwszy czwartek miesiąca – modlitwa o powołania kapłańskie">
                 </div>
                 <div class="form-group-styled">
@@ -992,7 +991,7 @@
                     <textarea id="admin-priest-desc" rows="4" placeholder="Wprowadź pełny opis lub zakres obowiązków..."></textarea>
                 </div>
                 <div class="form-group-styled">
-                    <label>Zdjęcie:</label>
+                    <label>Zdjęcie (zostanie automatycznie zoptymalizowane):</label>
                     <input type="file" id="admin-priest-file" accept="image/*">
                 </div>
                 <div style="display: flex; gap: 10px;">
@@ -1335,7 +1334,37 @@
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) { 
-                    finishSavingPriest(editId, name, role, desc, e.target.result); 
+                    // Automatyczne pomniejszanie obrazka przed zapisem (kompresja do JPEG max 300x300)
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 300;
+                        const MAX_HEIGHT = 300;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Konwersja do skompresowanego JPEG (jakość 0.7)
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        finishSavingPriest(editId, name, role, desc, compressedDataUrl);
+                    };
+                    img.src = e.target.result;
                 };
                 reader.onerror = function() {
                     alert("Wystąpił błąd podczas odczytu pliku zdjęcia.");
@@ -1366,7 +1395,7 @@
                 renderPriests();
                 alert("Duszpasterz został pomyślnie zapisany!");
             } catch (e) {
-                alert("Błąd zapisu: Prawdopodobnie wybrano zbyt duże zdjęcie, które przekracza limit pamięci przeglądarki (LocalStorage). Wybierz mniejszy plik graficzny.");
+                alert("Błąd zapisu: Pamięć podręczna przeglądarki jest pełna. Spróbować usunąć starsze wpisy lub mniejsze zdjęcie.");
             }
         }
 
