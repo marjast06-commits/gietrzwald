@@ -6,6 +6,8 @@
     <title>Sanktuarium Maryjne w Gietrzwałdzie - Portal Parafialny</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- localForage dla pojemnej bazy danych IndexedDB -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 
     <style>
         :root {
@@ -991,7 +993,7 @@
                     <textarea id="admin-priest-desc" rows="4" placeholder="Wprowadź pełny opis lub zakres obowiązków..."></textarea>
                 </div>
                 <div class="form-group-styled">
-                    <label>Zdjęcie (zostanie automatycznie zoptymalizowane):</label>
+                    <label>Zdjęcie (obsługiwane przez IndexedDB bez limitu 5MB):</label>
                     <input type="file" id="admin-priest-file" accept="image/*">
                 </div>
                 <div style="display: flex; gap: 10px;">
@@ -1312,12 +1314,22 @@
             `).join('');
         }
 
-        // --- DUSZPASTERZE ---
-        let priests = JSON.parse(localStorage.getItem('gietrzwald_priests')) || [
+        // --- DUSZPASTERZE (ZMIANA NA localForage / IndexedDB) ---
+        let priests = [
             { id: 1, name: "o. dr Marcin Zasada", role: "Kustosz Sanktuarium", desc: "Odpowiedzialny za całość prac duszpasterskich.", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300" },
             { id: 2, name: "o. Tomasz Kijowski", role: "Wikariusz i Rezydent", desc: "Spowiednik, katecheta i opiekun grup młodzieżowych.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300" },
             { id: 3, name: "o. Grzegorz Leśniak", role: "Kapelan Domu Pielgrzyma", desc: "Koordynator ds. zgłoszeń autokarowych.", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300" }
         ];
+
+        async function initPriestsData() {
+            const saved = await localforage.getItem('gietrzwald_priests');
+            if (saved) {
+                priests = saved;
+            } else {
+                await localforage.setItem('gietrzwald_priests', priests);
+            }
+            renderPriests();
+        }
 
         function savePriest() {
             const editId = document.getElementById('admin-priest-edit-id').value;
@@ -1337,8 +1349,8 @@
                     const img = new Image();
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 150;
-                        const MAX_HEIGHT = 150;
+                        const MAX_WIDTH = 300;
+                        const MAX_HEIGHT = 300;
                         let width = img.width;
                         let height = img.height;
 
@@ -1359,8 +1371,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Zoptymalizowana kompresja JPEG (jakość 0.5) dla uniknięcia błędów LocalStorage
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
                         finishSavingPriest(editId, name, role, desc, compressedDataUrl);
                     };
                     img.src = e.target.result;
@@ -1381,7 +1392,7 @@
             }
         }
 
-        function finishSavingPriest(editId, name, role, desc, photo) {
+        async function finishSavingPriest(editId, name, role, desc, photo) {
             try {
                 if(editId) {
                     const idx = priests.findIndex(p => p.id == editId);
@@ -1389,12 +1400,12 @@
                 } else {
                     priests.push({ id: Date.now(), name, role, desc, photo });
                 }
-                localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+                await localforage.setItem('gietrzwald_priests', priests);
                 resetPriestForm();
                 renderPriests();
                 alert("Duszpasterz został pomyślnie zapisany!");
             } catch (e) {
-                alert("Błąd zapisu: Pamięć podręczna przeglądarki jest pełna. Spróbuj usunąć starsze wpisy lub mniejsze zdjęcie.");
+                alert("Błąd zapisu w bazie danych IndexedDB: " + e);
             }
         }
 
@@ -1420,9 +1431,9 @@
             document.getElementById('btn-cancel-priest').style.display = "none";
         }
 
-        function deletePriest(id) {
+        async function deletePriest(id) {
             priests = priests.filter(p => p.id !== id);
-            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+            await localforage.setItem('gietrzwald_priests', priests);
             renderPriests();
         }
 
@@ -1455,7 +1466,7 @@
             renderPilgrimageAdminList();
             renderAnnouncements();
             renderArchive();
-            renderPriests();
+            initPriestsData();
             renderLiturgy();
         });
     </script>
