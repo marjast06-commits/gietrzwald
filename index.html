@@ -562,10 +562,10 @@
             font-size: 0.9rem;
         }
 
-        /* DUSZPASTERZE */
+        /* DUSZPASTERZE - POPRAWIONE NA ELASTYCZNĄ SIATKĘ (AUTO-FIT) */
         .grid-priests {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
         }
 
@@ -1316,7 +1316,10 @@
             const desc = document.getElementById('admin-priest-desc').value.trim();
             const fileInput = document.getElementById('admin-priest-file');
 
-            if(!name || !role) return;
+            if(!name || !role) {
+                alert("Podaj imię i funkcję duszpasterza.");
+                return;
+            }
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
@@ -1349,6 +1352,7 @@
             document.getElementById('admin-priest-desc').value = p.desc;
             document.getElementById('btn-save-priest').textContent = "Zapisz zmiany";
             document.getElementById('btn-cancel-priest').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetPriestForm() {
@@ -1356,6 +1360,7 @@
             document.getElementById('admin-priest-name').value = '';
             document.getElementById('admin-priest-role').value = '';
             document.getElementById('admin-priest-desc').value = '';
+            document.getElementById('admin-priest-file').value = '';
             document.getElementById('btn-save-priest').textContent = "Dodaj duszpasterza";
             document.getElementById('btn-cancel-priest').style.display = "none";
         }
