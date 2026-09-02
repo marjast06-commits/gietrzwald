@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200">
+    <title>Sanktuarium Maryjne w Gietrzwałdzie - Portal Parafialny</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-royal: #1b2a47;
+            --accent-gold: #d4af37;
+            --accent-gold-light: #f4e8c1;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-secondary: #64748b;
+            --border-light: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --radius: 12px;
+            --card-shadow: 0 4px 20px -2px rgba(27, 42, 71, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-width: 1200px;
+        }
+
+        /* --- EKRAN ŁADOWANIA --- */
+        #loader-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #1b2a47 0%, #0d1322 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            color: white;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #loader-screen.loader-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            max-width: 400px;
+        }
+
+        .loader-icon-box {
+            width: 90px;
+            height: 90px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .loader-content h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--accent-gold);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .loader-content p {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+        }
+
+        .loader-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .loader-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f4e8c1);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* --- MODAL LOGOWANIA --- */
+        #admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(13, 19, 34, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #admin-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .admin-modal-box {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-top: 4px solid var(--accent-gold);
+        }
+
+        .admin-modal-box h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-royal);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            background-color: var(--primary-royal);
+            color: white;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box i {
+            color: var(--accent-gold);
+            font-size: 1.7rem;
+        }
+
+        .logo-box h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-gold);
+        }
+
+        .btn-admin-auth {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .btn-admin-auth:hover {
+            background: var(--accent-gold);
+            color: var(--primary-royal);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-tab {
+            display: none;
+        }
+
+        .page-tab.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header-styled {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title-styled p {
+            color: var(--accent-gold);
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .section-title-styled h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-royal);
+            font-size: 1.8rem;
+            margin-top: 5px;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(27, 42, 71, 0.85), rgba(27, 42, 71, 0.85)), url('https://images.unsplash.com/photo-1548625361-185489f64319?q=80&w=1200') center/cover;
+            color: white;
+            border-radius: var(--radius);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+        }
+
+        .hero p {
+            font-size: 1rem;
+            max-width: 800px;
+            margin: 0 auto 1.5rem auto;
+            color: #e2e8f0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gold-light);
+            color: var(--primary-royal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-royal);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group-styled {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group-styled label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .form-group-styled input, 
+        .form-group-styled select,
+        .form-group-styled textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: white;
+        }
+
+        .btn-gold {
+            background: var(--accent-gold);
+            color: var(--primary-royal);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-gold:hover {
+            background: #c59f27;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .admin-control-box {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        body.admin-logged-in .admin-control-box {
+            display: block;
+        }
+
+        /* LITURGIA NA DZIŚ */
+        .liturgy-today-banner {
+            background: #d97706;
+            color: white;
+            padding: 1.2rem 1.5rem;
+            border-radius: var(--radius) var(--radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .liturgy-today-banner h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .liturgy-today-banner .meta-info {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            margin-bottom: 0.2rem;
+        }
+
+        .liturgy-vestment-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .vestment-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .liturgy-today-body {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0 0 var(--radius) var(--radius);
+            border: 1px solid var(--border-light);
+            border-top: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* BOX NA ORĘDZIA / WYDARZENIA HISTORYCZNE */
+        .liturgy-event-highlight {
+            background: #f8fafc;
+            border-left: 4px solid var(--accent-gold);
+            border: 1px solid var(--border-light);
+            border-left-width: 4px;
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--primary-royal);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .liturgy-event-highlight i {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .reading-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .reading-section-title {
+            color: var(--primary-royal);
+            font-family: 'Cinzel', serif;
+            border-bottom: 2px solid var(--accent-gold-light);
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .reading-item {
+            margin-bottom: 1rem;
+            padding-left: 0.5rem;
+        }
+
+        .reading-type {
+            font-weight: 700;
+            color: var(--primary-royal);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .reading-ref {
+            font-weight: 600;
+            color: #b45309;
+        }
+
+        /* REZERWACJA PIELGRZYMEK */
+        .booking-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .booking-item-admin {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        /* OGŁOSZENIA STYLES */
+        .announcements-container {
+            background: white;
+            padding: 1.8rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .announcements-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-gold-light);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .announcement-bullet-list {
+            list-style: disc;
+            padding-left: 20px;
+            margin-top: 1.5rem;
+        }
+
+        .announcement-bullet-list li {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .announcement-item-admin {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        /* DUSZPASTERZE */
+        .grid-priests {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .priest-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+        }
+
+        .priest-photo-container {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent-gold);
+            margin-bottom: 1.2rem;
+            background-color: var(--accent-gold-light);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .priest-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        footer {
+            background: var(--primary-royal);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 1.5cm;
+            }
+            body * {
+                visibility: hidden;
+            }
+            #printable-announcements, #printable-announcements * {
+                visibility: visible;
+            }
+            #printable-announcements {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-header-decoration {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 25px;
+                border-bottom: 2px solid #1b2a47;
+                padding-bottom: 15px;
+            }
+            .print-header-decoration h2 {
+                font-family: 'Cinzel', serif;
+                color: #1b2a47;
+                font-size: 1.4rem;
+                text-transform: uppercase;
+            }
+            .print-footer-info {
+                display: block !important;
+                margin-top: 40px;
+                text-align: center;
+                font-size: 9pt;
+                color: #64748b;
+                border-top: 1px solid #e2e8f0;
+                padding-top: 15px;
+            }
+        }
+        .print-header-decoration, .print-footer-info {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-screen">
+        <div class="loader-content">
+            <div class="loader-icon-box">
+                <i class="fa-solid fa-church"></i>
+            </div>
+            <h2>SANKTUARIUM GIETRZWAŁD</h2>
+            <p id="loader-status-text">Ładowanie portalu parafialnego...</p>
+            <div class="loader-bar-container">
+                <div class="loader-bar-fill" id="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal">
+        <div class="admin-modal-box">
+            <h3>🔒 Logowanie Administratora</h3>
+            <div class="form-group-styled">
+                <label>Wprowadź hasło:</label>
+                <input type="password" id="admin-password-input" placeholder="••••••••••••">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-gold" style="flex:1;" onclick="submitAdminPassword()">Zaloguj</button>
+                <button class="btn-sm btn-danger" style="flex:1;" onclick="closeAdminModal()">Anuluj</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="no-print">
+        <div class="header-container">
+            <div class="logo-box">
+                <i class="fa-solid fa-church"></i>
+                <div>
+                    <h1>GIETRZWAŁD</h1>
+                    <span style="font-size: 0.7rem; color: var(--accent-gold); letter-spacing: 1px; display:block;">SANKTUARIUM MARYJNE</span>
+                </div>
+            </div>
+
+            <nav id="main-nav">
+                <ul>
+                    <li><a onclick="switchTab('home')" id="nav-home" class="active">Strona Główna</a></li>
+                    <li><a onclick="switchTab('liturgia')" id="nav-liturgia">Liturgia</a></li>
+                    <li><a onclick="switchTab('pielgrzymki')" id="nav-pielgrzymki">Pielgrzymki</a></li>
+                    <li><a onclick="switchTab('ogloszenia')" id="nav-ogloszenia">Ogłoszenia</a></li>
+                    <li><a onclick="switchTab('duszpasterze')" id="nav-duszpasterze">Duszpasterze</a></li>
+                    <li><a onclick="switchTab('historia')" id="nav-historia">Historia</a></li>
+                    <li><button class="btn-admin-auth" id="btn-admin-login" onclick="toggleAdmin()">🔒 ADMIN</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="tab-home" class="page-tab active">
+            <div class="hero">
+                <h2>„Odmawiajcie Gorliwie Różaniec”</h2>
+                <p>Jedyne w Polsce objawienia maryjne oficjalnie zatwierdzone przez Stolicę Apostolską (1877 r.).</p>
+                <button class="btn-gold" onclick="switchTab('historia')">Poznaj Historię Gietrzwałdu</button>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-clock"></i></div>
+                    <h3>Porządek Mszy Św.</h3>
+                    <p><strong>Niedziele i Święta:</strong> 7:00, 9:00, 11:00, 14:00 (sezonowo), 16:00, 18:00</p>
+                    <p style="margin-top:10px;"><strong>Dni powszednie:</strong> 7:00, 12:00, 18:00</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-hands-praying"></i></div>
+                    <h3>Nabożeństwa Różańcowe</h3>
+                    <p>Codziennie przy Kaplicy Objawień i w Bazylice:</p>
+                    <ul style="padding-left:20px; margin-top:5px; font-size:0.9rem;">
+                        <li>6:30 – Tajemnice Radosne</li>
+                        <li>11:30 – Tajemnice Światła / Bolesne</li>
+                        <li>17:30 – Tajemnice Bolesne i Chwalebne</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-bus"></i></div>
+                    <h3>Zgłoś Pielgrzymkę</h3>
+                    <p>Planujesz przyjazd grupy lub parafii? Zgłoś grupę pielgrzymkową, aby zarezerwować Mszę św. lub oprowadzanie.</p>
+                    <button class="btn-gold" style="margin-top:15px;" onclick="switchTab('pielgrzymki')">Zarezerwuj Terminy</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-liturgia" class="page-tab">
+            <div class="section-header-styled">
+                <div class="section-title-styled">
+                    <p>Codzienne czytania mszalne</p>
+                    <h2>LITURGIA NA DZIŚ</h2>
+                </div>
+            </div>
+
+            <div class="admin-control-box">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1rem;">⚙️ Panel Admina: Liturgia, Orędzia i Wydarzenia Dnia</h3>
+                <div class="form-group-styled">
+                    <label>Data (np. Niedziela, 6 września 2026):</label>
+                    <input type="text" id="admin-read-date" placeholder="np. Niedziela, 6 września 2026">
+                </div>
+                <div class="form-group-styled">
+                    <label>Nazwa dnia / Okres (np. Poniedziałek XXII Tygodnia Okresu Zwykłego / Wspomnienie / Uroczystość):</label>
+                    <input type="text" id="admin-read-cycle" placeholder="np. Poniedziałek XXII Tygodnia Okresu Zwykłego">
+                </div>
+                <div class="form-group-styled">
+                    <label>Ważne wydarzenie dnia / Orędzie / Uwaga historyczna (np. Pierwszy czwartek miesiąca / Rocznica objawień):</label>
+                    <input type="text" id="admin-read-event" placeholder="np. Pierwszy czwartek miesiąca – modlitwa o powołania kapłańskie">
+                </div>
+                <div class="form-group-styled">
+                    <label>Kolor szat liturgicznych (ornatu):</label>
+                    <select id="admin-vestment-color">
+                        <option value="zielony">Zielony (Okres Zwykły)</option>
+                        <option value="bialy">Biały / Złoty (Uroczystości, Święta Pana, Matki Bożej)</option>
+                        <option value="fioletowy">Fioletowy (Adwent, Wielki Post, Msze za zmarłych)</option>
+                        <option value="czerwony">Czerwony (Niedziela Palmowa, Pięćdziesiątnica, Męczennicy)</option>
+                        <option value="rozowy">Różowy (3. Niedziela Adwentu / 4. Wielkiego Postu)</option>
+                    </select>
+                </div>
+                <div class="form-group-styled">
+                    <label>Pierwsze czytanie (Sygnatura | Tytuł):</label>
+                    <input type="text" id="admin-read-1" placeholder="np. Iz 56, 1. 6-7 | Mój dom będzie nazwany domem modlitwy">
+                </div>
+                <div class="form-group-styled">
+                    <label>Psalm (Sygnatura | Refren):</label>
+                    <input type="text" id="admin-read-ps" placeholder="np. Ps 67, 2-3. 5 | Niechaj cię wysławiają ludy">
+                </div>
+                <div class="form-group-styled">
+                    <label>Drugie czytanie (opcjonalnie | zostaw puste jeśli brak):</label>
+                    <input type="text" id="admin-read-2" placeholder="np. Rz 11, 13-15 | Boże dary i powołanie">
+                </div>
+                <div class="form-group-styled">
+                    <label>Ewangelia (Sygnatura | Tytuł):</label>
+                    <input type="text" id="admin-read-ev" placeholder="np. Mt 15, 21-28 | O, niewiasto, wielka jest wiara">
+                </div>
+                <button class="btn-gold" onclick="saveLiturgyData()">Zapisz i zaktualizuj na stronie</button>
+            </div>
+
+            <div style="max-width: 850px; margin: 0 auto;">
+                <div class="liturgy-today-banner">
+                    <div>
+                        <h3 id="display-liturgy-date">Ładowanie...</h3>
+                        <div class="meta-info"><strong id="display-liturgy-cycle-label">Dzień:</strong> <span id="display-liturgy-cycle">Ładowanie...</span></div>
+                    </div>
+                    <div>
+                        <div class="liturgy-vestment-badge" id="display-vestment-badge">
+                            <span class="vestment-dot" id="display-vestment-dot"></span>
+                            <span id="display-vestment-text">Szaty zielone</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="liturgy-today-body">
+                    <!-- Dynamiczny Box na Orędzia / Wydarzenia / Uwagi -->
+                    <div id="display-event-container" class="liturgy-event-highlight" style="display: none;">
+                        <i class="fa-solid fa-star"></i>
+                        <div>
+                            <strong>Wydarzenie / Uwaga / Orędzie dnia:</strong>
+                            <div id="display-event-text" style="margin-top: 2px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="reading-section">
+                        <div class="reading-section-title"><i class="fa-solid fa-book-bible"></i> Czytania mszalne na dzisiejszy dzień</div>
+                        
+                        <div class="reading-item">
+                            <span class="reading-type">Pierwsze czytanie</span>
+                            <span class="reading-ref" id="display-r1-ref">-</span>
+                            <div class="reading-desc"><em id="display-r1-desc">-</em></div>
+                        </div>
+
+                        <div class="reading-item">
+                            <span class="reading-type">Psalm responsoryjny</span>
+                            <span class="reading-ref" id="display-rps-ref">-</span>
+                            <div class="reading-desc"><strong id="display-rps-label">Refren:</strong> <span id="display-rps-text">-</span></div>
+                        </div>
+
+                        <div class="reading-item" id="display-r2-container" style="display: none;">
+                            <span class="reading-type">Drugie czytanie</span>
+                            <span class="reading-ref" id="display-r2-ref">-</span>
+                            <div class="reading-desc"><em id="display-r2-desc">-</em></div>
+                        </div>
+
+                        <div class="reading-item">
+                            <span class="reading-type">Ewangelia</span>
+                            <span class="reading-ref" id="display-rev-ref">-</span>
+                            <div class="reading-desc"><em id="display-rev-desc">-</em></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-pielgrzymki" class="page-tab">
+            <div class="section-header-styled">
+                <div class="section-title-styled">
+                    <p>Zgłoszenie Grupy Pielgrzymkowej</p>
+                    <h2>REZERWACJA PIELGRZYMKI</h2>
+                </div>
+            </div>
+
+            <div class="admin-control-box">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1rem;">🚌 Zgłoszona Lista Pielgrzymek</h3>
+                <div id="admin-pilgrimage-list"></div>
+            </div>
+
+            <div class="booking-card">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1.5rem; text-align:center;">Formularz Rezerwacji Grupy</h3>
+                <div class="form-group-styled">
+                    <label>Parafia / Organizator pielgrzymki:</label>
+                    <input type="text" id="pilgrim-group-name" placeholder="np. Parafia św. Mikołaja">
+                </div>
+                <div class="form-group-styled">
+                    <label>Opiekun / Kapłan:</label>
+                    <input type="text" id="pilgrim-leader" placeholder="np. ks. Andrzej Nowak">
+                </div>
+                <div class="form-group-styled">
+                    <label><i class="fa-brands fa-discord" style="color: #5865F2;"></i> Nick Discord:</label>
+                    <input type="text" id="pilgrim-discord" placeholder="np. nazwa#1234">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group-styled">
+                        <label>Data przyjazdu:</label>
+                        <input type="date" id="pilgrim-date">
+                    </div>
+                    <div class="form-group-styled">
+                        <label>Godzina:</label>
+                        <input type="time" id="pilgrim-time" value="10:00">
+                    </div>
+                </div>
+                <div class="form-group-styled">
+                    <label>Liczba pielgrzymów:</label>
+                    <input type="number" id="pilgrim-count" placeholder="np. 45" min="1">
+                </div>
+                <div class="form-group-styled">
+                    <label>Opcje:</label>
+                    <select id="pilgrim-options">
+                        <option value="Rezerwacja Mszy Św.">Rezerwacja Mszy Św.</option>
+                        <option value="Oprowadzanie z przewodnikiem">Oprowadzanie z przewodnikiem</option>
+                    </select>
+                </div>
+                <button class="btn-gold" style="width:100%; font-size:1rem; padding:12px;" onclick="savePilgrimage()">Zgłoś Pielgrzymkę</button>
+            </div>
+        </section>
+
+        <section id="tab-ogloszenia" class="page-tab">
+            <div class="section-header-styled no-print">
+                <div class="section-title-styled">
+                    <p>Informacje Parafialne</p>
+                    <h2>OGŁOSZENIA DUSZPASTERSKIE</h2>
+                </div>
+            </div>
+
+            <div class="admin-control-box no-print">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1rem;">📝 Zarządzanie Ogłoszeniami</h3>
+                <div class="form-group-styled">
+                    <label>Tytuł Niedzieli:</label>
+                    <input type="text" id="admin-sunday-title" placeholder="np. XXII Niedziela Zwykła" oninput="updateSundayTitle(this.value)">
+                </div>
+                <div class="form-group-styled">
+                    <label>Dodaj punkt:</label>
+                    <textarea id="admin-new-announcement" rows="2" placeholder="Treść ogłoszenia..."></textarea>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                    <button class="btn-gold" onclick="addAnnouncementPoint()" style="flex:1;">Dodaj punkt</button>
+                    <button class="btn-secondary btn-sm" onclick="archiveCurrentAnnouncements()" style="flex:1;">Archiwizuj / Nowy Tydzień</button>
+                </div>
+                <div id="admin-announcement-list"></div>
+            </div>
+
+            <div class="announcements-container" id="printable-announcements">
+                <div class="print-header-decoration">
+                    <h2>Sanktuarium Maryjne w Gietrzwałdzie</h2>
+                    <p>Ogłoszenia Duszpasterskie</p>
+                </div>
+
+                <div class="announcements-header-actions">
+                    <h3 id="display-sunday-title" style="font-family:'Cinzel', serif; color:var(--primary-royal); font-size:1.1rem;">XXII Niedziela Zwykła</h3>
+                    <button class="btn-gold no-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Drukuj Ogłoszenia (A4)</button>
+                </div>
+
+                <ul class="announcement-bullet-list" id="announcements-ul"></ul>
+
+                <div class="print-footer-info">
+                    Sanktuarium Matki Bożej Gietrzwałdzkiej • Oficjalny Portal Parafialny
+                </div>
+            </div>
+
+            <div class="announcements-container no-print" style="border-top: 4px solid #64748b;">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1rem; font-size:1.2rem;">📁 Archiwum Ogłoszeń</h3>
+                <div id="archive-container"></div>
+            </div>
+        </section>
+
+        <section id="tab-duszpasterze" class="page-tab">
+            <div class="section-header-styled">
+                <div class="section-title-styled">
+                    <p>Kustosze i duszpasterze sanktuarium</p>
+                    <h2>DUSZPASTERZE</h2>
+                </div>
+            </div>
+
+            <div class="admin-control-box no-print" style="margin-bottom: 2rem;">
+                <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:1rem;" id="priest-form-title">⛪ Dodaj / Edytuj Duszpasterza</h3>
+                <input type="hidden" id="admin-priest-edit-id" value="">
+                <div class="form-group-styled">
+                    <label>Imię i nazwisko:</label>
+                    <input type="text" id="admin-priest-name" placeholder="np. o. Jan Kowalski">
+                </div>
+                <div class="form-group-styled">
+                    <label>Funkcja:</label>
+                    <input type="text" id="admin-priest-role" placeholder="np. Wikariusz">
+                </div>
+                <div class="form-group-styled">
+                    <label>Opis:</label>
+                    <textarea id="admin-priest-desc" rows="2" placeholder="Opis..."></textarea>
+                </div>
+                <div class="form-group-styled">
+                    <label>Zdjęcie:</label>
+                    <input type="file" id="admin-priest-file" accept="image/*">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-gold" id="btn-save-priest" onclick="savePriest()" style="flex: 1;">Dodaj duszpasterza</button>
+                    <button class="btn-sm btn-secondary" id="btn-cancel-priest" onclick="resetPriestForm()" style="display:none; flex: 1;">Anuluj</button>
+                </div>
+                <div style="margin-top: 20px; border-top: 1px dashed #ffe58f; padding-top: 15px;" id="admin-priest-list"></div>
+            </div>
+
+            <div class="grid-priests" id="priests-grid-container"></div>
+        </section>
+
+        <section id="tab-historia" class="page-tab">
+            <div class="section-header-styled">
+                <div class="section-title-styled">
+                    <p>Jedyne w Polsce zatwierdzone objawienia</p>
+                    <h2>HISTORIA GIETRZWAŁDU</h2>
+                </div>
+            </div>
+            <div class="announcements-container">
+                <p style="margin-bottom: 1rem;">Objawienia maryjne w Gietrzwałdzie miały miejsce od 27 czerwca do 16 września 1877 roku. Głównymi wizjonerkami były dwie dziewczynki: Justyna Szafryńska i Barbara Samulowska. Matka Boża przemawiała do nich po polsku, wzywając do gorliwego odmawiania różańca świętego.</p>
+                <p>W 1977 roku Stolica Apostolska zatwierdziła kult gietrzwałdzki, podnosząc kościół parafialny do godności Bazyliki Mniejszej.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Sanktuarium Maryjne w Gietrzwałdzie. Wszelkie prawa zastrzeżone.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const fill = document.getElementById('loader-progress');
+            const statusText = document.getElementById('loader-status-text');
+            const screen = document.getElementById('loader-screen');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    statusText.textContent = "Gotowe!";
+                    setTimeout(() => {
+                        screen.classList.add('loader-hidden');
+                    }, 400);
+                }
+                fill.style.width = progress + '%';
+            }, 50);
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+            
+            const targetNav = document.getElementById('nav-' + tabId);
+            if (targetNav) targetNav.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleAdmin() {
+            if (document.body.classList.contains('admin-logged-in')) {
+                document.body.classList.remove('admin-logged-in');
+                document.getElementById('btn-admin-login').textContent = "🔒 ADMIN";
+                alert("Wylogowano z panelu administratora.");
+            } else {
+                document.getElementById('admin-modal').classList.add('active');
+                document.getElementById('admin-password-input').value = '';
+                document.getElementById('admin-password-input').focus();
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+
+        function submitAdminPassword() {
+            const pass = document.getElementById('admin-password-input').value;
+            if (pass === "gietrzwald1877" || pass === "admin") {
+                document.body.classList.add('admin-logged-in');
+                document.getElementById('btn-admin-login').textContent = "🔓 WYLOGUJ";
+                closeAdminModal();
+                alert("Zalogowano pomyślnie do Panelu Administratora!");
+            } else {
+                alert("Błędne hasło! Spróbuj ponownie.");
+            }
+        }
+
+        // --- ZARZĄDZANIE LITURGIĄ (NAZWA DNIA, ORĘDZIA/WYDARZENIA, KOLOR ORNATU) ---
+        let currentLiturgy = JSON.parse(localStorage.getItem('gietrzwald_liturgy')) || {
+            dateStr: "Poniedziałek, 31 sierpnia 2026",
+            cycleStr: "Poniedziałek XXII Tygodnia Okresu Zwykłego",
+            eventStr: "Dzień modlitw za parafię i intencje pielgrzymów",
+            vestmentColor: "zielony",
+            r1Ref: "1 Kor 2, 1-5",
+            r1Desc: "Głosiłem wam świadectwo o Bogu w słabości i w wielkiej obawie",
+            psRef: "Ps 119, 97. 98. 99. 100. 101. 102",
+            psText: "Jakże mi miła jest Twoja nauka, Panie!",
+            r2Ref: "",
+            r2Desc: "",
+            evRef: "Łk 4, 16-30",
+            evDesc: "Nadszedł do Nazaretu... Duch Pański spoczywa na Mnie"
+        };
+
+        const vestmentConfig = {
+            zielony: { label: "Szaty zielone", hex: "#16a34a" },
+            bialy: { label: "Szaty białe / złote", hex: "#f8fafc" },
+            fioletowy: { label: "Szaty fioletowe", hex: "#9333ea" },
+            czerwony: { label: "Szaty czerwone", hex: "#dc2626" },
+            rozowy: { label: "Szaty różowe", hex: "#f472b6" }
+        };
+
+        function saveLiturgyData() {
+            currentLiturgy = {
+                dateStr: document.getElementById('admin-read-date').value || currentLiturgy.dateStr,
+                cycleStr: document.getElementById('admin-read-cycle').value || currentLiturgy.cycleStr,
+                eventStr: document.getElementById('admin-read-event').value || "",
+                vestmentColor: document.getElementById('admin-vestment-color').value || "zielony",
+                r1Ref: document.getElementById('admin-read-1').value.split('|')[0]?.trim() || currentLiturgy.r1Ref,
+                r1Desc: document.getElementById('admin-read-1').value.split('|')[1]?.trim() || currentLiturgy.r1Desc,
+                psRef: document.getElementById('admin-read-ps').value.split('|')[0]?.trim() || currentLiturgy.psRef,
+                psText: document.getElementById('admin-read-ps').value.split('|')[1]?.trim() || currentLiturgy.psText,
+                r2Ref: document.getElementById('admin-read-2').value.split('|')[0]?.trim() || "",
+                r2Desc: document.getElementById('admin-read-2').value.split('|')[1]?.trim() || "",
+                evRef: document.getElementById('admin-read-ev').value.split('|')[0]?.trim() || currentLiturgy.evRef,
+                evDesc: document.getElementById('admin-read-ev').value.split('|')[1]?.trim() || currentLiturgy.evDesc
+            };
+
+            localStorage.setItem('gietrzwald_liturgy', JSON.stringify(currentLiturgy));
+            renderLiturgy();
+            alert("Zapisano pomyślnie dane liturgiczne, wydarzenie oraz kolor ornatu!");
+        }
+
+        function renderLiturgy() {
+            document.getElementById('display-liturgy-date').textContent = currentLiturgy.dateStr;
+            document.getElementById('display-liturgy-cycle').textContent = currentLiturgy.cycleStr;
+            
+            // Obsługa wyświetlania orędzia / wydarzenia dnia
+            const eventContainer = document.getElementById('display-event-container');
+            const eventText = document.getElementById('display-event-text');
+            if (currentLiturgy.eventStr && currentLiturgy.eventStr.trim() !== "") {
+                eventContainer.style.display = "flex";
+                eventText.textContent = currentLiturgy.eventStr;
+            } else {
+                eventContainer.style.display = "none";
+            }
+
+            // Kolor ornatu
+            const vColorKey = currentLiturgy.vestmentColor || "zielony";
+            const vConf = vestmentConfig[vColorKey] || vestmentConfig["zielony"];
+            document.getElementById('display-vestment-text').textContent = vConf.label;
+            document.getElementById('display-vestment-dot').style.backgroundColor = vConf.hex;
+
+            document.getElementById('display-r1-ref').textContent = currentLiturgy.r1Ref;
+            document.getElementById('display-r1-desc').textContent = currentLiturgy.r1Desc;
+            
+            document.getElementById('display-rps-ref').textContent = currentLiturgy.psRef;
+            document.getElementById('display-rps-text').textContent = currentLiturgy.psText;
+
+            const r2Container = document.getElementById('display-r2-container');
+            if (currentLiturgy.r2Ref && currentLiturgy.r2Ref.trim() !== "") {
+                r2Container.style.display = "block";
+                document.getElementById('display-r2-ref').textContent = currentLiturgy.r2Ref;
+                document.getElementById('display-r2-desc').textContent = currentLiturgy.r2Desc;
+            } else {
+                r2Container.style.display = "none";
+            }
+
+            document.getElementById('display-rev-ref').textContent = currentLiturgy.evRef;
+            document.getElementById('display-rev-desc').textContent = currentLiturgy.evDesc;
+
+            // Wypełnienie pól w panelu admina
+            document.getElementById('admin-read-date').value = currentLiturgy.dateStr;
+            document.getElementById('admin-read-cycle').value = currentLiturgy.cycleStr;
+            document.getElementById('admin-read-event').value = currentLiturgy.eventStr || "";
+            document.getElementById('admin-vestment-color').value = vColorKey;
+            document.getElementById('admin-read-1').value = `${currentLiturgy.r1Ref} | ${currentLiturgy.r1Desc}`;
+            document.getElementById('admin-read-ps').value = `${currentLiturgy.psRef} | ${currentLiturgy.psText}`;
+            document.getElementById('admin-read-2').value = currentLiturgy.r2Ref ? `${currentLiturgy.r2Ref} | ${currentLiturgy.r2Desc}` : "";
+            document.getElementById('admin-read-ev').value = `${currentLiturgy.evRef} | ${currentLiturgy.evDesc}`;
+        }
+
+        // --- PIELGRZYMKI ---
+        let pilgrimageList = JSON.parse(localStorage.getItem('gietrzwald_pilgrimages')) || [
+            { id: 1, group: "Parafia św. Józefa w Olsztynie", leader: "ks. Piotr", discord: "piotr#001", date: "2026-09-15", time: "11:00", count: 50, option: "Rezerwacja Mszy Św." }
+        ];
+
+        function savePilgrimage() {
+            const group = document.getElementById('pilgrim-group-name').value;
+            const leader = document.getElementById('pilgrim-leader').value;
+            const discord = document.getElementById('pilgrim-discord').value;
+            const date = document.getElementById('pilgrim-date').value;
+            const time = document.getElementById('pilgrim-time').value;
+            const count = document.getElementById('pilgrim-count').value;
+            const option = document.getElementById('pilgrim-options').value;
+
+            if(!group || !date || !count) {
+                alert("Proszę wypełnić wymagane pola formularza.");
+                return;
+            }
+
+            pilgrimageList.push({ id: Date.now(), group, leader, discord, date, time, count, option });
+            localStorage.setItem('gietrzwald_pilgrimages', JSON.stringify(pilgrimageList));
+            renderPilgrimageAdminList();
+            alert("Pielgrzymka została zgłoszona pomyślnie!");
+            
+            document.getElementById('pilgrim-group-name').value = '';
+            document.getElementById('pilgrim-leader').value = '';
+            document.getElementById('pilgrim-discord').value = '';
+            document.getElementById('pilgrim-date').value = '';
+            document.getElementById('pilgrim-count').value = '';
+        }
+
+        function deletePilgrimage(id) {
+            pilgrimageList = pilgrimageList.filter(item => item.id !== id);
+            localStorage.setItem('gietrzwald_pilgrimages', JSON.stringify(pilgrimageList));
+            renderPilgrimageAdminList();
+        }
+
+        function renderPilgrimageAdminList() {
+            const container = document.getElementById('admin-pilgrimage-list');
+            if(!container) return;
+            if(pilgrimageList.length === 0) {
+                container.innerHTML = '<p style="font-size:0.9rem; color:var(--text-secondary);">Brak zgłoszonych pielgrzymek.</p>';
+                return;
+            }
+            container.innerHTML = pilgrimageList.map(item => `
+                <div class="booking-item-admin">
+                    <div>
+                        <strong>${item.group}</strong> (${item.count} osób)<br>
+                        <span style="color:var(--text-secondary); font-size:0.8rem;">Data: ${item.date} ${item.time} | Opiekun: ${item.leader || 'Brak'} | Discord: ${item.discord || 'Brak'} | ${item.option}</span>
+                    </div>
+                    <button class="btn-sm btn-danger" onclick="deletePilgrimage(${item.id})"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        // --- OGŁOSZENIA ---
+        let sundayTitle = localStorage.getItem('gietrzwald_sunday_title') || "XXII Niedziela Zwykła";
+        let announcements = JSON.parse(localStorage.getItem('gietrzwald_announcements')) || [
+            "W najbliższą środę o godz. 17:00 odbędzie się spotkanie Rady Parafialnej.",
+            "Składka z niedzieli przeznaczona jest na utrzymanie Bazyliki.",
+            "Zapraszamy na codzienne nabożeństwa różańcowe o godz. 17:30."
+        ];
+        let announcementsArchive = JSON.parse(localStorage.getItem('gietrzwald_archive')) || [];
+
+        function updateSundayTitle(val) {
+            sundayTitle = val || "XXII Niedziela Zwykła";
+            document.getElementById('display-sunday-title').textContent = sundayTitle;
+            localStorage.setItem('gietrzwald_sunday_title', sundayTitle);
+        }
+
+        function addAnnouncementPoint() {
+            const text = document.getElementById('admin-new-announcement').value.trim();
+            if(!text) return;
+            announcements.push(text);
+            localStorage.setItem('gietrzwald_announcements', JSON.stringify(announcements));
+            document.getElementById('admin-new-announcement').value = '';
+            renderAnnouncements();
+        }
+
+        function deleteAnnouncementPoint(index) {
+            announcements.splice(index, 1);
+            localStorage.setItem('gietrzwald_announcements', JSON.stringify(announcements));
+            renderAnnouncements();
+        }
+
+        function archiveCurrentAnnouncements() {
+            if(announcements.length === 0) return;
+            announcementsArchive.unshift({ id: Date.now(), title: sundayTitle, dateStr: new Date().toLocaleDateString('pl-PL'), items: [...announcements] });
+            localStorage.setItem('gietrzwald_archive', JSON.stringify(announcementsArchive));
+            announcements = [];
+            localStorage.setItem('gietrzwald_announcements', JSON.stringify(announcements));
+            renderAnnouncements();
+            renderArchive();
+            alert("Zarchiwizowano ogłoszenia!");
+        }
+
+        function deleteArchiveEntry(id) {
+            announcementsArchive = announcementsArchive.filter(e => e.id !== id);
+            localStorage.setItem('gietrzwald_archive', JSON.stringify(announcementsArchive));
+            renderArchive();
+        }
+
+        function renderAnnouncements() {
+            const ul = document.getElementById('announcements-ul');
+            const adminList = document.getElementById('admin-announcement-list');
+            const titleInput = document.getElementById('admin-sunday-title');
+            const displayTitle = document.getElementById('display-sunday-title');
+
+            if(titleInput && titleInput.value !== sundayTitle) titleInput.value = sundayTitle;
+            if(displayTitle) displayTitle.textContent = sundayTitle;
+            if(ul) ul.innerHTML = announcements.map(i => `<li>${i}</li>`).join('');
+            if(adminList) adminList.innerHTML = announcements.map((item, idx) => `
+                <div class="announcement-item-admin">
+                    <span style="max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${idx+1}. ${item}</span>
+                    <button class="btn-sm btn-danger" onclick="deleteAnnouncementPoint(${idx})">Usuń</button>
+                </div>
+            `).join('');
+        }
+
+        function renderArchive() {
+            const container = document.getElementById('archive-container');
+            if(!container) return;
+            if(announcementsArchive.length === 0) {
+                container.innerHTML = '<p style="font-size:0.9rem; color:var(--text-secondary);">Brak archiwum.</p>';
+                return;
+            }
+            container.innerHTML = announcementsArchive.map(entry => `
+                <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 15px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-family:'Cinzel', serif; color:var(--primary-royal); font-size: 0.95rem;">${entry.title}</strong>
+                        <button class="btn-sm btn-danger" onclick="deleteArchiveEntry(${entry.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <ul style="padding-left: 20px; font-size: 0.9rem;">${entry.items.map(i => `<li>${i}</li>`).join('')}</ul>
+                </div>
+            `).join('');
+        }
+
+        // --- DUSZPASTERZE ---
+        let priests = JSON.parse(localStorage.getItem('gietrzwald_priests')) || [
+            { id: 1, name: "o. dr Marcin Zasada", role: "Kustosz Sanktuarium", desc: "Odpowiedzialny za całość prac duszpasterskich.", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300" },
+            { id: 2, name: "o. Tomasz Kijowski", role: "Wikariusz i Rezydent", desc: "Spowiednik, katecheta i opiekun grup młodzieżowych.", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300" },
+            { id: 3, name: "o. Grzegorz Leśniak", role: "Kapelan Domu Pielgrzyma", desc: "Koordynator ds. zgłoszeń autokarowych.", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300" }
+        ];
+
+        function savePriest() {
+            const editId = document.getElementById('admin-priest-edit-id').value;
+            const name = document.getElementById('admin-priest-name').value.trim();
+            const role = document.getElementById('admin-priest-role').value.trim();
+            const desc = document.getElementById('admin-priest-desc').value.trim();
+            const fileInput = document.getElementById('admin-priest-file');
+
+            if(!name || !role) return;
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { finishSavingPriest(editId, name, role, desc, e.target.result); }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                let photo = priests.find(p => p.id == editId)?.photo || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300";
+                finishSavingPriest(editId, name, role, desc, photo);
+            }
+        }
+
+        function finishSavingPriest(editId, name, role, desc, photo) {
+            if(editId) {
+                const idx = priests.findIndex(p => p.id == editId);
+                if(idx !== -1) priests[idx] = { id: Number(editId), name, role, desc, photo };
+            } else {
+                priests.push({ id: Date.now(), name, role, desc, photo });
+            }
+            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+            resetPriestForm();
+            renderPriests();
+        }
+
+        function editPriest(id) {
+            const p = priests.find(item => item.id === id);
+            if(!p) return;
+            document.getElementById('admin-priest-edit-id').value = p.id;
+            document.getElementById('admin-priest-name').value = p.name;
+            document.getElementById('admin-priest-role').value = p.role;
+            document.getElementById('admin-priest-desc').value = p.desc;
+            document.getElementById('btn-save-priest').textContent = "Zapisz zmiany";
+            document.getElementById('btn-cancel-priest').style.display = "block";
+        }
+
+        function resetPriestForm() {
+            document.getElementById('admin-priest-edit-id').value = '';
+            document.getElementById('admin-priest-name').value = '';
+            document.getElementById('admin-priest-role').value = '';
+            document.getElementById('admin-priest-desc').value = '';
+            document.getElementById('btn-save-priest').textContent = "Dodaj duszpasterza";
+            document.getElementById('btn-cancel-priest').style.display = "none";
+        }
+
+        function deletePriest(id) {
+            priests = priests.filter(p => p.id !== id);
+            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+            renderPriests();
+        }
+
+        function renderPriests() {
+            const container = document.getElementById('priests-grid-container');
+            const adminList = document.getElementById('admin-priest-list');
+            if(!container) return;
+            container.innerHTML = priests.map(p => `
+                <div class="priest-card">
+                    <div class="priest-photo-container"><img src="${p.photo}" class="priest-photo" alt="${p.name}"></div>
+                    <h3 style="font-family:'Cinzel', serif; color:var(--primary-royal); margin-bottom:5px;">${p.name}</h3>
+                    <p style="color:var(--accent-gold); font-weight:600; font-size:0.9rem; margin-bottom:10px;">${p.role}</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary);">${p.desc}</p>
+                </div>
+            `).join('');
+            if(adminList) {
+                adminList.innerHTML = priests.map(p => `
+                    <div class="announcement-item-admin">
+                        <span><strong>${p.name}</strong> - ${p.role}</span>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn-sm btn-gold" onclick="editPriest(${p.id})">Edytuj</button>
+                            <button class="btn-sm btn-danger" onclick="deletePriest(${p.id})">Usuń</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            renderPilgrimageAdminList();
+            renderAnnouncements();
+            renderArchive();
+            renderPriests();
+            renderLiturgy();
+        });
+    </script>
+</body>
+</html>
