@@ -10,7 +10,6 @@
     <style>
         :root {
             --primary-royal: #1e3a8a;
-            --primary-dark: #0f172a;
             --accent-gold: #d97706;
             --bg-body: #f8fafc;
             --text-main: #1e293b;
@@ -22,43 +21,18 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; }
 
-        header { background: var(--primary-dark); color: var(--white); padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(217, 119, 6, 0.3); }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { color: var(--accent-gold); font-size: 1.8rem; }
-        .logo-text h2 { font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 2px; color: var(--white); }
-        .logo-text span { font-size: 0.7rem; letter-spacing: 3px; color: var(--accent-gold); text-transform: uppercase; font-weight: 600; display: block; }
-
-        nav { background: var(--primary-dark); display: flex; justify-content: flex-end; align-items: center; gap: 5px; padding: 0 2rem 1rem 2rem; flex-wrap: wrap; }
-        nav a { background: transparent; border: none; color: #cbd5e1; padding: 8px 14px; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
-        nav a:hover, nav a.active { color: var(--white); background: rgba(255, 255, 255, 0.08); }
+        header { background: linear-gradient(135deg, var(--primary-royal), #0f172a); color: var(--white); padding: 2rem 1rem; text-align: center; position: relative; }
+        .admin-login-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: var(--white); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         
-        .admin-nav-btn { background: rgba(217, 119, 6, 0.15) !important; border: 1px solid var(--accent-gold) !important; color: var(--accent-gold) !important; display: flex; align-items: center; gap: 6px; }
-        .admin-nav-btn:hover { background: var(--accent-gold) !important; color: var(--white) !important; }
+        nav { background: var(--white); display: flex; justify-content: center; gap: 10px; padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        nav a { background: transparent; border: none; color: var(--text-main); padding: 10px 20px; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        nav a.active { background: var(--primary-royal); color: var(--white); }
 
-        main { max-width: 1200px; margin: 35px auto; padding: 0 20px; }
+        main { max-width: 1000px; margin: 30px auto; padding: 0 15px; }
         .page-tab { display: none; }
         .page-tab.active { display: block; }
 
-        /* HERO SECTION */
-        .hero-banner { background: #334155; border-radius: 16px; padding: 50px 30px; text-align: center; color: var(--white); margin-bottom: 40px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); background-image: linear-gradient(rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1543968996-ee822b8176ba?q=80&w=1200'); background-size: cover; background-position: center; }
-        .hero-banner h1 { font-family: 'Cinzel', serif; font-size: 2.2rem; color: #fbbf24; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .hero-banner p { font-size: 1.1rem; color: #e2e8f0; margin-bottom: 25px; max-width: 700px; margin-left: auto; margin-right: auto; }
-        
-        .btn-gold { background: var(--accent-gold); color: var(--white); border: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); }
-        .btn-gold:hover { background: #b45309; }
-
-        /* HOME CARDS GRID */
-        .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .home-card { background: var(--white); border-radius: 14px; padding: 30px; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .home-card-icon { width: 50px; height: 50px; background: #fef3c7; color: var(--accent-gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 20px; }
-        .home-card h3 { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--primary-dark); margin-bottom: 15px; }
-        .home-card p, .home-card ul { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 15px; }
-        .home-card ul { padding-left: 20px; }
-        .home-card li { margin-bottom: 6px; }
-
-        /* STANDARD CARDS & ADMIN */
-        .card, .admin-control-box { background: var(--white); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .card, .admin-control-box { background: var(--white); border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .admin-control-box { display: none; border-left: 5px solid var(--accent-gold); background: #fffdf5; }
         body.admin-logged-in .admin-control-box { display: block; }
 
@@ -76,122 +50,49 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: var(--white); padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-box { background: var(--white); padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
 
     <div class="modal-overlay" id="admin-modal">
         <div class="modal-box">
-            <h3 style="margin-bottom: 1rem; font-family: 'Cinzel', serif;">Panel Administratora</h3>
+            <h3 style="margin-bottom: 1rem;">Panel Administratora</h3>
             <div class="form-group">
                 <label>Hasło:</label>
                 <input type="password" id="admin-password-input">
             </div>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="submitAdminPassword()">Zaloguj</button>
+            <button class="btn" onclick="submitAdminPassword()">Zaloguj</button>
         </div>
     </div>
 
     <header>
-        <div class="logo-area">
-            <div class="logo-icon"><i class="fa-solid.fa-church fa-church" style="color: #fbbf24;"><i class="fa-solid fa-place-of-worship"></i></i></div>
-            <div class="logo-text">
-                <h2>GIETRZWAŁD</h2>
-                <span>Sanktuarium Maryjne</span>
-            </div>
-        </div>
-        <div style="font-size: 0.85rem; color: #94a3b8; display: none;" id="admin-badge">Tryb Edycji Aktywny</div>
+        <button class="admin-login-btn" onclick="toggleAdmin()">🔒 ADMIN</button>
+        <h1>Sanktuarium Matki Bożej</h1>
+        <p>Gietrzwałdzkie Miejsce Objawień Maryjnych</p>
     </header>
 
     <nav>
-        <a id="nav-home" class="active" onclick="switchTab('home')">Strona Główna</a>
-        <a id="nav-liturgia" onclick="switchTab('liturgia')">Liturgia</a>
-        <a id="nav-pielgrzymki" onclick="switchTab('pielgrzymki')">Pielgrzymki</a>
-        <a id="nav-ogloszenia" onclick="switchTab('ogloszenia')">Ogłoszenia</a>
+        <a id="nav-liturgia" class="active" onclick="switchTab('liturgia')">Liturgia</a>
         <a id="nav-duszpasterze" onclick="switchTab('duszpasterze')">Duszpasterze</a>
-        <a id="nav-historia" onclick="switchTab('historia')">Historia</a>
-        <a class="admin-nav-btn" id="nav-auth-btn" onclick="toggleAdmin()"><i class="fa-solid fa-lock" id="auth-icon"></i> <span id="auth-text">ZALOGUJ</span></a>
     </nav>
 
     <main>
-        <!-- STRONA GŁÓWNA -->
-        <section id="tab-home" class="page-tab active">
-            <div class="hero-banner">
-                <h1>„Odmawiajcie Gorliwie Różaniec”</h1>
-                <p>Jedyne w Polsce objawienia maryjne oficjalnie zatwierdzone przez Stolicę Apostolską (1877 r.).</p>
-                <button class="btn-gold" onclick="switchTab('historia')">Poznaj Historię Gietrzwałdu</button>
-            </div>
-
-            <div class="home-grid">
-                <div class="home-card">
-                    <div>
-                        <div class="home-card-icon"><i class="fa-regular fa-clock"></i></div>
-                        <h3>Porządek Mszy Św.</h3>
-                        <p><strong>Niedziele i Święta:</strong> 7:00, 9:00, 11:00, 14:00 (sezonowo), 16:00, 18:00</p>
-                        <p><strong>Dni powszednie:</strong> 7:00, 12:00, 18:00</p>
-                    </div>
-                    <button class="btn" style="width: 100%; margin-top: 15px;" onclick="switchTab('liturgia')">Pełna Liturgia</button>
-                </div>
-
-                <div class="home-card">
-                    <div>
-                        <div class="home-card-icon"><i class="fa-solid fa-hands-praying"></i></div>
-                        <h3>Nabożeństwa Różańcowe</h3>
-                        <p>Codziennie przy Kaplicy Objawień i w Bazylice:</p>
-                        <ul>
-                            <li>6:30 – Tajemnice Radosne</li>
-                            <li>11:30 – Tajemnice Światła / Bolesne</li>
-                            <li>17:30 – Tajemnice Bolesne i Chwalebne</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="home-card">
-                    <div>
-                        <div class="home-card-icon"><i class="fa-solid fa-bus"></i></div>
-                        <h3>Zgłoś Pielgrzymkę</h3>
-                        <p>Planujesz przyjazd grupy lub parafii? Zgłoś grupę pielgrzymkową, aby zarezerwować Mszę św. lub oprowadzanie.</p>
-                    </div>
-                    <button class="btn-gold" style="width: 100%; margin-top: 15px;" onclick="switchTab('pielgrzymki')">Zarezerwuj Terminy</button>
-                </div>
-            </div>
-        </section>
-
         <!-- LITURGIA -->
-        <section id="tab-liturgia" class="page-tab">
+        <section id="tab-liturgia" class="page-tab active">
             <div class="admin-control-box">
                 <h3>⚙️ Edycja Liturgii Dnia</h3>
-                <div class="form-group"><label>Data / Dzień:</label><input type="text" id="admin-read-date"></div>
-                <div class="form-group"><label>Cykl / Okres:</label><input type="text" id="admin-read-cycle"></div>
+                <div class="form-group"><label>Data:</label><input type="text" id="admin-read-date"></div>
+                <div class="form-group"><label>Cykl:</label><input type="text" id="admin-read-cycle"></div>
                 <div class="form-group"><label>Ewangelia:</label><input type="text" id="admin-read-ev"></div>
                 <button class="btn" onclick="saveLiturgyData()">Zapisz liturgię</button>
             </div>
 
             <div class="card">
-                <h3 id="display-liturgy-date" style="font-family:'Cinzel',serif; color:var(--primary-dark);">Ładowanie...</h3>
-                <p id="display-liturgy-cycle" style="color:var(--accent-gold); font-weight:600; margin-top:5px;"></p>
-                <hr style="margin: 20px 0; border:0; border-top:1px solid var(--border-light);">
-                <p><strong>Ewangelia dnia:</strong> <span id="display-rev-desc"></span></p>
-            </div>
-        </section>
-
-        <!-- PIELGRZYMKI -->
-        <section id="tab-pielgrzymki" class="page-tab">
-            <div class="card">
-                <h3 style="font-family:'Cinzel',serif; margin-bottom:15px;">Zgłaszanie Pielgrzymek</h3>
-                <p style="color:var(--text-secondary); margin-bottom:20px;">Wypełnij formularz, aby zgłosić przybycie grupy zorganizowanej do Sanktuarium.</p>
-                <div class="form-group"><label>Nazwa parafii / grupy:</label><input type="text" placeholder="np. Parafia św. Józefa w Olsztynie"></div>
-                <div class="form-group"><label>Orientacyjna liczba pielgrzymów:</label><input type="number" placeholder="50"></div>
-                <div class="form-group"><label>Planowana data i godzina:</label><input type="datetime-local"></div>
-                <button class="btn" onclick="alert('Zgłoszenie zostało wysłane!')">Wyślij zgłoszenie</button>
-            </div>
-        </section>
-
-        <!-- OGŁOSZENIA -->
-        <section id="tab-ogloszenia" class="page-tab">
-            <div class="card">
-                <h3 style="font-family:'Cinzel',serif; margin-bottom:15px;">Ogłoszenia Parafialne</h3>
-                <p style="color:var(--text-secondary);">Aktualne ogłoszenia duszpasterskie będą publikowane w tym miejscu.</p>
+                <h3 id="display-liturgy-date">Ładowanie...</h3>
+                <p id="display-liturgy-cycle">Proszę czekać</p>
+                <hr style="margin: 15px 0;">
+                <p><strong>Ewangelia:</strong> <span id="display-rev-desc"></span></p>
             </div>
         </section>
 
@@ -204,20 +105,11 @@
                 <div class="form-group"><label>Kolejność:</label><input type="number" id="admin-priest-order" value="0"></div>
                 <div class="form-group"><label>Opis:</label><textarea id="admin-priest-desc"></textarea></div>
                 <div class="form-group"><label>Zdjęcie:</label><input type="file" id="admin-priest-file" accept="image/*"></div>
-                <button class="btn" onclick="savePriest()">Dodaj duszpasterza</button>
+                <button class="btn" onclick="savePriest()">Dodaj</button>
                 <div id="admin-priest-list" style="margin-top: 15px;"></div>
             </div>
 
             <div class="grid-priests" id="priests-grid-container"></div>
-        </section>
-
-        <!-- HISTORIA -->
-        <section id="tab-historia" class="page-tab">
-            <div class="card">
-                <h3 style="font-family:'Cinzel',serif; margin-bottom:15px;">Historia Gietrzwałdu</h3>
-                <p style="color:var(--text-secondary); margin-bottom:15px;">Objawienia matki Bożej w Gietrzwałdzie miały miejsce od 27 czerwca do 16 września 1877 roku. Głównymi wizjonerkami były Justyna Szafryńska i Barbara Samulowska.</p>
-                <p style="color:var(--text-secondary);">Matka Boża przemówiła do nich po polsku, polecając codzienne odmawianie różańca świętego.</p>
-            </div>
         </section>
     </main>
 
@@ -248,15 +140,11 @@
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             document.getElementById('nav-' + tabId).classList.add('active');
-            window.scrollTo(0, 0);
         }
 
         function toggleAdmin() {
             if (document.body.classList.contains('admin-logged-in')) {
                 document.body.classList.remove('admin-logged-in');
-                document.getElementById('auth-text').textContent = "ZALOGUJ";
-                document.getElementById('auth-icon').className = "fa-solid fa-lock";
-                document.getElementById('admin-badge').style.display = "none";
             } else {
                 document.getElementById('admin-modal').classList.add('active');
             }
@@ -266,10 +154,6 @@
             if (document.getElementById('admin-password-input').value === "admin") {
                 document.body.classList.add('admin-logged-in');
                 document.getElementById('admin-modal').classList.remove('active');
-                document.getElementById('admin-password-input').value = "";
-                document.getElementById('auth-text').textContent = "WYLOGUJ";
-                document.getElementById('auth-icon').className = "fa-solid fa-lock-open";
-                document.getElementById('admin-badge').style.display = "block";
             } else {
                 alert("Błędne hasło");
             }
@@ -279,12 +163,13 @@
             const db = window.db;
             const { doc, setDoc, collection, onSnapshot } = window.firebaseCols;
 
+            // Nasłuch liturgii
             onSnapshot(doc(db, "portal", "liturgia"), (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    document.getElementById('display-liturgy-date').textContent = data.dateStr || "";
-                    document.getElementById('display-liturgy-cycle').textContent = data.cycleStr || "";
-                    document.getElementById('display-rev-desc').textContent = data.evDesc || "";
+                    document.getElementById('display-liturgy-date').textContent = data.dateStr;
+                    document.getElementById('display-liturgy-cycle').textContent = data.cycleStr;
+                    document.getElementById('display-rev-desc').textContent = data.evDesc;
                     
                     document.getElementById('admin-read-date').value = data.dateStr || "";
                     document.getElementById('admin-read-cycle').value = data.cycleStr || "";
@@ -298,6 +183,7 @@
                 }
             });
 
+            // Nasłuch duszpasterzy
             onSnapshot(collection(db, "duszpasterze"), (snapshot) => {
                 window.priests = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
                 window.priests.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
@@ -365,14 +251,14 @@
             container.innerHTML = window.priests.map(p => `
                 <div class="priest-card">
                     <div class="priest-photo"><img src="${p.photo}" alt="${p.name}"></div>
-                    <h3 style="font-family:'Cinzel',serif;">${p.name}</h3>
-                    <p style="color:var(--accent-gold); font-weight:600; margin-bottom:8px;">${p.role}</p>
-                    <p style="font-size:0.9rem; color:var(--text-secondary);">${p.desc}</p>
+                    <h3>${p.name}</h3>
+                    <p style="color:var(--accent-gold);">${p.role}</p>
+                    <p>${p.desc}</p>
                 </div>
             `).join('');
 
             adminList.innerHTML = window.priests.map(p => `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; background:#fff; padding:8px; border-radius:4px; border:1px solid var(--border-light);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                     <span>${p.name}</span>
                     <button class="btn btn-danger" onclick="deletePriest('${p.firestoreId}')">Usuń</button>
                 </div>
