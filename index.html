@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sanktuarium Maryjne w Gietrzwałdzie - Portal Parafialny</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -36,7 +36,6 @@
             background-color: var(--bg-light);
             color: var(--text-dark);
             line-height: 1.6;
-            min-width: 1200px;
         }
 
         /* --- EKRAN ŁADOWANIA --- */
@@ -65,6 +64,7 @@
 
         .loader-content {
             max-width: 400px;
+            width: 100%;
         }
 
         .loader-icon-box {
@@ -128,6 +128,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
+            padding: 15px;
         }
 
         #admin-modal.active {
@@ -139,7 +140,8 @@
             background: white;
             padding: 2rem;
             border-radius: var(--radius);
-            width: 380px;
+            width: 100%;
+            max-width: 380px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border-top: 4px solid var(--accent-gold);
         }
@@ -168,6 +170,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo-box {
@@ -192,6 +196,7 @@
             list-style: none;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         nav a {
@@ -289,7 +294,7 @@
 
         .grid-3 {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.2rem;
         }
 
@@ -407,6 +412,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .liturgy-today-banner h3 {
@@ -521,6 +528,8 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         /* OGŁOSZENIA STYLES */
@@ -541,6 +550,8 @@
             border-bottom: 2px solid var(--accent-gold-light);
             padding-bottom: 12px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .announcement-bullet-list {
@@ -566,6 +577,8 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         /* DUSZPASTERZE - ELASTYCZNA SIATKA (AUTO-FIT) */
@@ -895,7 +908,7 @@
                     <label><i class="fa-brands fa-discord" style="color: #5865F2;"></i> Nick Discord:</label>
                     <input type="text" id="pilgrim-discord" placeholder="np. nazwa#1234">
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:15px;">
                     <div class="form-group-styled">
                         <label>Data przyjazdu:</label>
                         <input type="date" id="pilgrim-date">
@@ -938,9 +951,9 @@
                     <label>Dodaj punkt:</label>
                     <textarea id="admin-new-announcement" rows="2" placeholder="Treść ogłoszenia..."></textarea>
                 </div>
-                <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                    <button class="btn-gold" onclick="addAnnouncementPoint()" style="flex:1;">Dodaj punkt</button>
-                    <button class="btn-secondary btn-sm" onclick="archiveCurrentAnnouncements()" style="flex:1;">Archiwizuj / Nowy Tydzień</button>
+                <div style="display:flex; gap:10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn-gold" onclick="addAnnouncementPoint()" style="flex:1; min-width: 140px;">Dodaj punkt</button>
+                    <button class="btn-secondary btn-sm" onclick="archiveCurrentAnnouncements()" style="flex:1; min-width: 140px;">Archiwizuj / Nowy Tydzień</button>
                 </div>
                 <div id="admin-announcement-list"></div>
             </div>
@@ -996,9 +1009,9 @@
                     <label>Zdjęcie (obsługiwane przez IndexedDB bez limitu 5MB):</label>
                     <input type="file" id="admin-priest-file" accept="image/*">
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-gold" id="btn-save-priest" onclick="savePriest()" style="flex: 1;">Dodaj duszpasterza</button>
-                    <button class="btn-sm btn-secondary" id="btn-cancel-priest" onclick="resetPriestForm()" style="display:none; flex: 1;">Anuluj</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-gold" id="btn-save-priest" onclick="savePriest()" style="flex: 1; min-width: 140px;">Dodaj duszpasterza</button>
+                    <button class="btn-sm btn-secondary" id="btn-cancel-priest" onclick="resetPriestForm()" style="display:none; flex: 1; min-width: 140px;">Anuluj</button>
                 </div>
                 <div style="margin-top: 20px; border-top: 1px dashed #ffe58f; padding-top: 15px;" id="admin-priest-list"></div>
             </div>
@@ -1305,7 +1318,7 @@
             }
             container.innerHTML = announcementsArchive.map(entry => `
                 <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 15px; margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                         <strong style="font-family:'Cinzel', serif; color:var(--primary-royal); font-size: 0.95rem;">${entry.title}</strong>
                         <button class="btn-sm btn-danger" onclick="deleteArchiveEntry(${entry.id})"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -1453,7 +1466,7 @@
                 adminList.innerHTML = priests.map(p => `
                     <div class="announcement-item-admin">
                         <span><strong>${p.name}</strong> - ${p.role}</span>
-                        <div style="display:flex; gap:5px;">
+                        <div style="display:flex; gap:5px; flex-wrap: wrap;">
                             <button class="btn-sm btn-gold" onclick="editPriest(${p.id})">Edytuj</button>
                             <button class="btn-sm btn-danger" onclick="deletePriest(${p.id})">Usuń</button>
                         </div>
