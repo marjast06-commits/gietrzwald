@@ -601,6 +601,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
+            align-items: stretch;
         }
 
         .priest-card {
@@ -613,6 +614,7 @@
             align-items: center;
             text-align: center;
             padding: 2rem 1.5rem 1.5rem 1.5rem;
+            height: 100%;
         }
 
         .priest-photo-container {
@@ -624,6 +626,7 @@
             margin-bottom: 1.2rem;
             background-color: var(--accent-gold-light);
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            flex-shrink: 0;
         }
 
         .priest-photo {
@@ -640,6 +643,7 @@
             text-align: left;
             width: 100%;
             padding: 0 10px;
+            margin-top: auto;
         }
 
         footer {
@@ -1133,7 +1137,6 @@
                     const data = docSnap.data();
                     renderLiturgyUI(data);
                 } else {
-                    // Domyślne wartości jeśli pusto
                     const defaultLiturgy = {
                         dateStr: "Poniedziałek, 31 sierpnia 2026",
                         cycleStr: "Poniedziałek XXII Tygodnia Okresu Zwykłego",
@@ -1174,7 +1177,6 @@
 
             onSnapshot(collection(db, "ogloszenia_punkty"), (snapshot) => {
                 window.announcements = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-                // sortowanie po dacie utworzenia jeśli jest
                 window.announcements.sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0));
                 renderAnnouncementsUI();
             });
@@ -1351,7 +1353,6 @@
                 createdAt: Date.now()
             });
 
-            // Usuń bieżące punkty
             for(let a of window.announcements) {
                 await deleteDoc(doc(db, "ogloszenia_punkty", a.firestoreId));
             }
