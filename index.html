@@ -108,7 +108,7 @@
                 <span>Sanktuarium Maryjne</span>
             </div>
         </div>
-        <div style="font-size: 0.85rem; color: #94a3b8; display: none;" id="admin-badge">Tryb Edycji Aktywny</div>
+        <div style="font-size: 0.85rem; color: #94a3b8; display: none;" id="admin-badge">Tryb Edycji (Chmura)</div>
     </header>
 
     <nav>
@@ -226,7 +226,7 @@
             <div class="liturgy-card">
                 <div class="liturgy-meta-row">
                     <div>
-                        <h3 id="display-l-date" style="font-family:'Cinzel',serif; font-size: 1.4rem; color:var(--primary-dark);">Ładowanie...</h3>
+                        <h3 id="display-l-date" style="font-family:'Cinzel',serif; font-size: 1.4rem; color:var(--primary-dark);">Ładowanie z chmury...</h3>
                         <p id="display-l-cycle" style="color:var(--text-secondary); font-size: 0.95rem; margin-top:2px;"></p>
                     </div>
                     <div>
@@ -289,7 +289,7 @@
                 <div class="form-group"><label>Kolejność:</label><input type="number" id="admin-priest-order" value="0"></div>
                 <div class="form-group"><label>Opis:</label><textarea id="admin-priest-desc"></textarea></div>
                 <div class="form-group"><label>Zdjęcie:</label><input type="file" id="admin-priest-file" accept="image/*"></div>
-                <button class="btn" onclick="savePriest()">Dodaj duszpasterza</button>
+                <button class="btn" onclick="savePriest()">Dodaj duszpasterza do chmury</button>
                 <div id="admin-priest-list" style="margin-top: 15px;"></div>
             </div>
 
@@ -307,6 +307,72 @@
     </main>
 
     <script>
+        // === KONFIGURACJA JSONBIN.IO ===
+        const BIN_ID = "TUTAJ_WKLEJ_ID_SWOJEGO_BINU";       // Wklej ID swojego binu w cudzysłowie
+        const API_KEY = "TUTAJ_WKLEJ_SWÓJ_MASTER_KEY";      // Wklej Master Key z JSONBin w cudzysłowie
+
+        let appData = {
+            liturgia: {
+                date: "Niedziela, 6 września 2026",
+                cycle: "XXIII Niedziela Zwykła",
+                event: "Dzień modlitw za ojczyznę i rolników",
+                color: "Zielony (Okres Zwykły)",
+                read1: "Iz 56, 1. 6-7 | Mój dom będzie nazwany domem modlitwy",
+                psalm: "Ps 67, 2-3. 5 | Niechaj cię wysławiają ludy",
+                read2: "Rz 11, 13-15 | Boże dary i powołanie",
+                ev: "Mt 15, 21-28 | O, niewiasto, wielka jest wiara"
+            },
+            priests: [
+                { id: 1, name: "Ks. Proboszcz", role: "Proboszcz Sanktuarium", order: 1, desc: "Kustosz sanktuarium.", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300" }
+            ]
+        };
+
+        // Pobieranie danych z chmury przy starcie strony
+        async function fetchCloudData() {
+            if (BIN_ID.includes("TUTAJ")) {
+                console.warn("Nie skonfigurowano JSONBin ID! Używam danych domyślnych.");
+                initUI();
+                return;
+            }
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.record) {
+                        appData = result.record;
+                    }
+                }
+            } catch (err) {
+                console.error("Błąd pobierania danych z chmury:", err);
+            }
+            initUI();
+        }
+
+        // Zapisywanie danych do chmury
+        async function saveCloudData() {
+            if (BIN_ID.includes("TUTAJ")) {
+                alert("Najpierw skonfiguruj BIN_ID oraz API_KEY w kodzie JavaScript!");
+                return;
+            }
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(appData)
+                });
+                if (!response.ok) {
+                    throw new Error("Błąd zapisu w chmurze");
+                }
+            } catch (err) {
+                alert("Nie udało się zapisać danych w chmurze: " + err.message);
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
@@ -340,21 +406,16 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            loadLiturgy();
-            loadPriests();
+            fetchCloudData();
         });
 
+        function initUI() {
+            loadLiturgy();
+            loadPriests();
+        }
+
         function loadLiturgy() {
-            let data = JSON.parse(localStorage.getItem('gietrzwald_liturgia_v2')) || {
-                date: "Niedziela, 6 września 2026",
-                cycle: "XXIII Niedziela Zwykła",
-                event: "Dzień modlitw za ojczyznę i rolników",
-                color: "Zielony (Okres Zwykły)",
-                read1: "Iz 56, 1. 6-7 | Mój dom będzie nazwany domem modlitwy",
-                psalm: "Ps 67, 2-3. 5 | Niechaj cię wysławiają ludy",
-                read2: "Rz 11, 13-15 | Boże dary i powołanie",
-                ev: "Mt 15, 21-28 | O, niewiasto, wielka jest wiara"
-            };
+            let data = appData.liturgia;
 
             document.getElementById('display-l-date').textContent = data.date;
             document.getElementById('display-l-cycle').textContent = data.cycle;
@@ -389,8 +450,8 @@
             document.getElementById('admin-l-ev').value = data.ev;
         }
 
-        window.saveLiturgyData = function() {
-            const data = {
+        window.saveLiturgyData = async function() {
+            appData.liturgia = {
                 date: document.getElementById('admin-l-date').value,
                 cycle: document.getElementById('admin-l-cycle').value,
                 event: document.getElementById('admin-l-event').value,
@@ -400,15 +461,9 @@
                 read2: document.getElementById('admin-l-read2').value,
                 ev: document.getElementById('admin-l-ev').value
             };
-            localStorage.setItem('gietrzwald_liturgia_v2', JSON.stringify(data));
+            await saveCloudData();
             loadLiturgy();
-            alert("Zapisano liturgię pomyślnie!");
-        }
-
-        function getPriests() {
-            return JSON.parse(localStorage.getItem('gietrzwald_priests')) || [
-                { id: 1, name: "Ks. Proboszcz", role: "Proboszcz Sanktuarium", order: 1, desc: "Kustosz sanktuarium.", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300" }
-            ];
+            alert("Zapisano liturgię w chmurze! Teraz każdy zobaczy zmiany.");
         }
 
         window.savePriest = function() {
@@ -418,7 +473,7 @@
             const desc = document.getElementById('admin-priest-desc').value;
             const fileInput = document.getElementById('admin-priest-file');
 
-            let photo = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300";
+            let defaultPhoto = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300";
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
@@ -426,46 +481,64 @@
                     const img = new Image();
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
-                        canvas.width = 300; canvas.height = 300;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        const maxSize = 200; // Mniejszy rozmiar, żeby zmieścić się w limicie zapytań API
+                        if (width > height) {
+                            if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+                        } else {
+                            if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, 300, 300);
-                        photo = canvas.toDataURL('image/jpeg', 0.8);
-                        appendPriest(name, role, order, desc, photo);
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedPhoto = canvas.toDataURL('image/jpeg', 0.6);
+                        appendPriest(name, role, order, desc, compressedPhoto);
                     };
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                appendPriest(name, role, order, desc, photo);
+                appendPriest(name, role, order, desc, defaultPhoto);
             }
         }
 
-        function appendPriest(name, role, order, desc, photo) {
-            let priests = getPriests();
-            priests.push({ id: Date.now(), name, role, order, desc, photo });
-            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
-            loadPriests();
-            document.getElementById('admin-priest-name').value = "";
-            document.getElementById('admin-priest-role').value = "";
-            document.getElementById('admin-priest-desc').value = "";
-            alert("Dodano duszpasterza!");
+        async function appendPriest(name, role, order, desc, photo) {
+            try {
+                if(!appData.priests) appData.priests = [];
+                appData.priests.push({ id: Date.now(), name, role, order, desc, photo });
+                await saveCloudData();
+                loadPriests();
+                
+                document.getElementById('admin-priest-name').value = "";
+                document.getElementById('admin-priest-role').value = "";
+                document.getElementById('admin-priest-order').value = "0";
+                document.getElementById('admin-priest-desc').value = "";
+                document.getElementById('admin-priest-file').value = "";
+                alert("Duszpasterz został dodany do chmury!");
+            } catch (e) {
+                alert("Błąd zapisu w chmurze.");
+            }
         }
 
-        window.deletePriest = function(id) {
-            let priests = getPriests();
-            priests = priests.filter(p => p.id !== id);
-            localStorage.setItem('gietrzwald_priests', JSON.stringify(priests));
+        window.deletePriest = async function(id) {
+            appData.priests = appData.priests.filter(p => p.id !== id);
+            await saveCloudData();
             loadPriests();
         }
 
         function loadPriests() {
-            let priests = getPriests();
-            priests.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+            if(!appData.priests) appData.priests = [];
+            appData.priests.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
 
             const container = document.getElementById('priests-grid-container');
             const adminList = document.getElementById('admin-priest-list');
             
-            container.innerHTML = priests.map(p => `
+            container.innerHTML = appData.priests.map(p => `
                 <div class="priest-card">
                     <div class="priest-photo"><img src="${p.photo}" alt="${p.name}"></div>
                     <h3 style="font-family:'Cinzel',serif;">${p.name}</h3>
@@ -474,7 +547,7 @@
                 </div>
             `).join('');
 
-            adminList.innerHTML = priests.map(p => `
+            adminList.innerHTML = appData.priests.map(p => `
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; background:#fff; padding:8px; border-radius:4px; border:1px solid var(--border-light);">
                     <span>${p.name}</span>
                     <button class="btn btn-danger" onclick="deletePriest(${p.id})">Usuń</button>
